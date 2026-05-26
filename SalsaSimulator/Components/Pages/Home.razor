@@ -1,19 +1,93 @@
 @page "/"
+@rendermode InteractiveServer
 @using SalsaSimulator.Models
 @using SalsaSimulator.Data
 @using Microsoft.EntityFrameworkCore
 @inject SalsaDbContext Db
+@inject SalsaCalculatorService Calculator
 
 <PageTitle>Simulador de Salsa Picante</PageTitle>
 
 @code {
     private List<Aji> ajies = new();
+    private List<Build> builds = new();
+    private RecetaInput input = new();
+    private PerfilSalsa? perfil = null;
+    private bool calculando = false;
 
     protected override async Task OnInitializedAsync()
     {
-        ajies = await Db.Ajies.ToListAsync();
+        ajies = await Db.Ajies.OrderBy(a => a.Nombre).ToListAsync();
+        builds = await Db.Builds.ToListAsync();
+        for (int i = 0; i < 10; i++)
+            input.Ajies.Add(new AjiInput());
     }
+
+    private async Task Calcular()
+    {
+        calculando = true;
+        await Task.Yield();
+        perfil = Calculator.Calcular(input, ajies);
+        calculando = false;
+    }
+
+    private void Limpiar()
+    {
+        input = new RecetaInput();
+        for (int i = 0; i < 10; i++)
+            input.Ajies.Add(new AjiInput());
+        perfil = null;
+    }
+
+    private void CargarBuild(Build build)
+    {
+        Limpiar();
+        var composicion = System.Text.Json.JsonSerializer
+            .Deserialize<List<ComposicionItem>>(build.ComposicionJson) ?? new();
+        for (int i = 0; i < composicion.Count && i < 10; i++)
+        {
+            input.Ajies[i].Nombre = composicion[i].nombre;
+            input.Ajies[i].Gramos = composicion[i].porcentaje * 2;
+        }
+        input.DiasFerrmentacion = build.DiasFerrmentacion;
+        perfil = null;
+    }
+
+    private string Porcentaje(int index)
+    {
+        var total = input.Ajies.Where(a => a.Gramos > 0).Sum(a => a.Gramos);
+        if (total == 0 || input.Ajies[index].Gramos == 0) return "0%";
+        return $"{input.Ajies[index].Gramos / total * 100:F0}%";
+    }
+
+    private string InfoRapida(int index)
+    {
+        var nombre = input.Ajies[index].Nombre;
+        if (string.IsNullOrEmpty(nombre)) return "—";
+        var aji = ajies.FirstOrDefault(a => a.Nombre == nombre);
+        return aji is null ? "—" : $"🌶 {aji.Picante}/10 · {aji.ScovilleEstimado} SHU";
+    }
+
+    private string Barra(double valor) => $"{valor * 10:F0}%";
+
+    private string ColorBarra(double valor) => valor switch
+    {
+        >= 8 => "#e53e3e",
+        >= 6 => "#ed8936",
+        >= 4 => "#ecc94b",
+        _ => "#68d391"
+    };
+
+    private string ClaseRecomendacion(string tipo) => tipo switch
+    {
+        "warning" => "rec-warning",
+        "sugerencia" => "rec-sugerencia",
+        _ => "rec-ok"
+    };
+
+    private record ComposicionItem(string nombre, double porcentaje);
 }
+
 <div class="simulador-container">
 
     <!-- ===== HEADER ===== -->
@@ -22,7 +96,7 @@
         <p>Construí tu salsa · Elegí ingredientes · Predecí el resultado</p>
     </header>
 
-    <!-- ===== CUERPO PRINCIPAL: dos columnas ===== -->
+    <!-- ===== CUERPO PRINCIPAL ===== -->
     <div class="simulador-body">
 
         <!-- ========== COLUMNA IZQUIERDA: FORMULARIO ========== -->
@@ -43,339 +117,164 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Fila 1 -->
-                        <tr>
-                            <td>
-                                <select name="aji_1">
-                                    <option value="">— Elegir ají —</option>
-
-                                    @foreach (var aji in ajies)
-                                    {
-                                        <option value="@aji.Id">
-                                            @aji.Nombre
-                                        </option>
-                                    }
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_1" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 2 -->
-                        <tr>
-                            <td>
-                                <select name="aji_2">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_2" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 3 -->
-                        <tr>
-                            <td>
-                                <select name="aji_3">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_3" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 4 -->
-                        <tr>
-                            <td>
-                                <select name="aji_4">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_4" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 5 -->
-                        <tr>
-                            <td>
-                                <select name="aji_5">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_5" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 6 -->
-                        <tr>
-                            <td>
-                                <select name="aji_6">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_6" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 7 -->
-                        <tr>
-                            <td>
-                                <select name="aji_7">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_7" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 8 -->
-                        <tr>
-                            <td>
-                                <select name="aji_8">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_8" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 9 -->
-                        <tr>
-                            <td>
-                                <select name="aji_9">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_9" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
-                        <!-- Fila 10 -->
-                        <tr>
-                            <td>
-                                <select name="aji_10">
-                                    <option value="">— Elegir ají —</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="gramos_10" min="0" placeholder="g" />
-                            </td>
-                            <td>
-                                <span class="porcentaje">0%</span>
-                            </td>
-                            <td>
-                                <span class="info-rapida">—</span>
-                            </td>
-                        </tr>
+                        @for (int i = 0; i < 10; i++)
+                        {
+                            var idx = i;
+                            <tr>
+                                <td>
+                                    <select @bind="input.Ajies[idx].Nombre">
+                                        <option value="">— Elegir ají —</option>
+                                        @foreach (var aji in ajies)
+                                        {
+                                            <option value="@aji.Nombre">@aji.Nombre</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number"
+                                           @bind="input.Ajies[idx].Gramos"
+                                           min="0" placeholder="g" />
+                                </td>
+                                <td>
+                                    <span class="porcentaje">@Porcentaje(idx)</span>
+                                </td>
+                                <td>
+                                    <span class="info-rapida">@InfoRapida(idx)</span>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td><span class="total-gramos">0 g</span></td>
-                            <td><span class="total-porcentaje">0%</span></td>
-                            <td>
-                                <!-- Indica si los % suman 100 o no -->
-                                <span class="validacion-porcentaje">—</span>
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
             </section>
 
-            <!-- SECCIÓN: Ingredientes Extra -->
-            <section class="seccion-ingredientes-extra">
-                <h2>🧅 Ingredientes Extra</h2>
+            <!-- SECCIÓN: Ingredientes extra -->
+            <section class="seccion-ingredientes">
+                <h2>🧪 Ingredientes extra</h2>
 
                 <div class="ingredientes-grid">
 
-                    <!-- Ajo -->
                     <div class="ingrediente-item">
-                        <label for="ajo">🧄 Ajo</label>
-                        <input type="number" id="ajo" name="ajo" min="0" placeholder="0" />
+                        <label>🧄 Ajo</label>
+                        <input type="number" @bind="input.Ajo" min="0" placeholder="0" />
                         <span class="unidad">dientes</span>
                     </div>
 
-                    <!-- Cebolla blanca -->
                     <div class="ingrediente-item">
-                        <label for="cebolla_blanca">🧅 Cebolla blanca</label>
-                        <input type="number" id="cebolla_blanca" name="cebolla_blanca" min="0" placeholder="0" />
+                        <label>🧅 Cebolla blanca</label>
+                        <input type="number" @bind="input.CebollaBlanca" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Cebolla morada -->
                     <div class="ingrediente-item">
-                        <label for="cebolla_morada">🟣 Cebolla morada</label>
-                        <input type="number" id="cebolla_morada" name="cebolla_morada" min="0" placeholder="0" />
+                        <label>🧅 Cebolla morada</label>
+                        <input type="number" @bind="input.CebollaMorada" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Zanahoria -->
                     <div class="ingrediente-item">
-                        <label for="zanahoria">🥕 Zanahoria</label>
-                        <input type="number" id="zanahoria" name="zanahoria" min="0" placeholder="0" />
+                        <label>🥕 Zanahoria</label>
+                        <input type="number" @bind="input.Zanahoria" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Mango -->
                     <div class="ingrediente-item">
-                        <label for="mango">🥭 Mango</label>
-                        <input type="number" id="mango" name="mango" min="0" placeholder="0" />
+                        <label>🥭 Mango</label>
+                        <input type="number" @bind="input.Mango" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Piña -->
                     <div class="ingrediente-item">
-                        <label for="pina">🍍 Piña</label>
-                        <input type="number" id="pina" name="pina" min="0" placeholder="0" />
+                        <label>🍍 Piña</label>
+                        <input type="number" @bind="input.Pina" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Manzana -->
                     <div class="ingrediente-item">
-                        <label for="manzana">🍎 Manzana</label>
-                        <input type="number" id="manzana" name="manzana" min="0" placeholder="0" />
+                        <label>🍎 Manzana</label>
+                        <input type="number" @bind="input.Manzana" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Tomate -->
                     <div class="ingrediente-item">
-                        <label for="tomate">🍅 Tomate</label>
-                        <input type="number" id="tomate" name="tomate" min="0" placeholder="0" />
+                        <label>🍅 Tomate</label>
+                        <input type="number" @bind="input.Tomate" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Morrón -->
                     <div class="ingrediente-item">
-                        <label for="morron">🫑 Morrón</label>
-                        <input type="number" id="morron" name="morron" min="0" placeholder="0" />
+                        <label>🫑 Morrón</label>
+                        <input type="number" @bind="input.Morron" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Miel -->
                     <div class="ingrediente-item">
-                        <label for="miel">🍯 Miel</label>
-                        <input type="number" id="miel" name="miel" min="0" placeholder="0" />
+                        <label>🍯 Miel</label>
+                        <input type="number" @bind="input.Miel" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Azúcar -->
                     <div class="ingrediente-item">
-                        <label for="azucar">🍬 Azúcar</label>
-                        <input type="number" id="azucar" name="azucar" min="0" placeholder="0" />
+                        <label>🍬 Azúcar</label>
+                        <input type="number" @bind="input.Azucar" min="0" placeholder="0" />
                         <span class="unidad">g</span>
                     </div>
 
-                    <!-- Vinagre blanco -->
                     <div class="ingrediente-item">
-                        <label for="vinagre_blanco">🫙 Vinagre blanco</label>
-                        <input type="number" id="vinagre_blanco" name="vinagre_blanco" min="0" placeholder="0" />
+                        <label>🫙 Vinagre blanco</label>
+                        <input type="number" @bind="input.VinagreBlanco" min="0" placeholder="0" />
                         <span class="unidad">ml</span>
                     </div>
 
-                    <!-- Vinagre de manzana -->
                     <div class="ingrediente-item">
-                        <label for="vinagre_manzana">🍶 Vinagre de manzana</label>
-                        <input type="number" id="vinagre_manzana" name="vinagre_manzana" min="0" placeholder="0" />
+                        <label>🍶 Vinagre de manzana</label>
+                        <input type="number" @bind="input.VinagreManzana" min="0" placeholder="0" />
                         <span class="unidad">ml</span>
                     </div>
 
-                    <!-- Limón / Lima -->
                     <div class="ingrediente-item">
-                        <label for="limon">🍋 Limón / Lima (jugo)</label>
-                        <input type="number" id="limon" name="limon" min="0" placeholder="0" />
+                        <label>🍋 Limón / Lima (jugo)</label>
+                        <input type="number" @bind="input.Limon" min="0" placeholder="0" />
                         <span class="unidad">ml</span>
                     </div>
 
-                    <!-- Especias -->
                     <div class="ingrediente-item">
-                        <label for="especias">🌿 Especias</label>
-                        <input type="range" id="especias" name="especias" min="0" max="5" step="1" value="0" />
-                        <span class="unidad">nivel 0–5</span>
+                        <label>🌿 Especias</label>
+                        <input type="range" @bind="input.Especias" min="0" max="5" step="1" />
+                        <span class="unidad">nivel @input.Especias/5</span>
                     </div>
 
                 </div>
             </section>
 
-            <!-- SECCIÓN: Parámetros de Fermentación -->
+            <!-- SECCIÓN: Fermentación -->
             <section class="seccion-fermentacion">
                 <h2>🧪 Fermentación</h2>
 
                 <div class="fermentacion-grid">
 
                     <div class="ingrediente-item">
-                        <label for="sal">🧂 Sal</label>
-                        <input type="number" id="sal" name="sal" min="0" max="10" step="0.1" placeholder="2.0" />
+                        <label>🧂 Sal</label>
+                        <input type="number" @bind="input.SalPorcentaje"
+                               min="0" max="10" step="0.1" placeholder="2.0" />
                         <span class="unidad">%</span>
                     </div>
 
                     <div class="ingrediente-item">
-                        <label for="dias_fermentacion">📅 Días de fermentación</label>
-                        <input type="number" id="dias_fermentacion" name="dias_fermentacion" min="0" max="30" placeholder="5" />
+                        <label>📅 Días de fermentación</label>
+                        <input type="number" @bind="input.DiasFerrmentacion"
+                               min="0" max="30" placeholder="5" />
                         <span class="unidad">días</span>
                     </div>
 
                     <div class="ingrediente-item">
-                        <label for="temperatura">🌡️ Temperatura</label>
-                        <input type="number" id="temperatura" name="temperatura" min="0" max="50" placeholder="25" />
+                        <label>🌡️ Temperatura</label>
+                        <input type="number" @bind="input.TemperaturaC"
+                               min="0" max="50" placeholder="25" />
                         <span class="unidad">°C</span>
                     </div>
 
                 </div>
 
-                <!-- Guía de fermentación (solo texto, referencia para el usuario) -->
                 <div class="guia-fermentacion">
                     <h3>Guía rápida</h3>
                     <ul>
@@ -387,12 +286,13 @@
                 </div>
             </section>
 
-            <!-- BOTÓN PRINCIPAL -->
+            <!-- BOTONES -->
             <div class="acciones-formulario">
-                <button type="button" class="btn-calcular">
-                    🔥 Calcular Perfil de Salsa
+                <button type="button" class="btn-calcular"
+                        @onclick="Calcular" disabled="@calculando">
+                    @(calculando ? "⏳ Calculando..." : "🔥 Calcular Perfil de Salsa")
                 </button>
-                <button type="button" class="btn-limpiar">
+                <button type="button" class="btn-limpiar" @onclick="Limpiar">
                     🗑 Limpiar todo
                 </button>
             </div>
@@ -402,290 +302,112 @@
         <!-- ========== COLUMNA DERECHA: RESULTADOS ========== -->
         <main class="panel-resultados">
 
-            <!-- PERFIL DE SABOR -->
-            <section class="seccion-perfil">
-                <h2>📊 Perfil de Sabor</h2>
-
-                <div class="atributos-lista">
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🌶</span>
-                        <span class="atributo-nombre">Picante</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🍬</span>
-                        <span class="atributo-nombre">Dulzor</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🍋</span>
-                        <span class="atributo-nombre">Acidez</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🌴</span>
-                        <span class="atributo-nombre">Tropical / Frutal</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🧪</span>
-                        <span class="atributo-nombre">Umami</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🎭</span>
-                        <span class="atributo-nombre">Complejidad</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🌿</span>
-                        <span class="atributo-nombre">Frescura</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">🔥</span>
-                        <span class="atributo-nombre">Ahumado</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item">
-                        <span class="atributo-icono">😭</span>
-                        <span class="atributo-nombre">Ferocidad</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
-                    <div class="atributo-item atributo-balance">
-                        <span class="atributo-icono">⚖️</span>
-                        <span class="atributo-nombre">Balance</span>
-                        <div class="barra-contenedor">
-                            <div class="barra-relleno" style="width: 0%"></div>
-                        </div>
-                        <span class="atributo-valor">—</span>
-                    </div>
-
+            @if (perfil is null)
+            {
+                <div class="placeholder-resultados">
+                    <p>🌶 Completá los ingredientes y presioná <strong>Calcular</strong> para ver el perfil.</p>
                 </div>
-            </section>
+            }
+            else
+            {
+                <!-- PERFIL DE SABOR -->
+                <section class="seccion-perfil">
+                    <h2>📊 Perfil de Sabor</h2>
+                    <div class="atributos-lista">
 
-            <!-- COLOR Y TEXTURA -->
-            <section class="seccion-color-textura">
-                <h2>🎨 Color y Textura</h2>
-                <div class="color-textura-grid">
-                    <div class="resultado-item">
-                        <span class="resultado-label">Color esperado</span>
-                        <span class="resultado-valor" id="color-esperado">—</span>
+                        @foreach (var (icono, nombre, valor) in new[]
+                        {
+                            ("🌶",  "Picante",           perfil.Picante),
+                            ("🍬",  "Dulzor",            perfil.Dulzor),
+                            ("🍋",  "Acidez",            perfil.Acidez),
+                            ("🌴",  "Tropical / Frutal", perfil.TropicalFrutal),
+                            ("🧪",  "Umami",             perfil.Umami),
+                            ("🎭",  "Complejidad",       perfil.Complejidad),
+                            ("🌿",  "Frescura",          perfil.Frescura),
+                            ("🔥",  "Ahumado",           perfil.Ahumado),
+                            ("😭",  "Ferocidad",         perfil.Ferocidad),
+                            ("⚖️", "Balance",            perfil.Balance),
+                            ("⏳",  "Persistencia",      perfil.Persistencia),
+                        })
+                        {
+                            <div class="atributo-item">
+                                <span class="atributo-icono">@icono</span>
+                                <span class="atributo-nombre">@nombre</span>
+                                <div class="barra-contenedor">
+                                    <div class="barra-relleno"
+                                         style="width: @Barra(valor); background-color: @ColorBarra(valor);">
+                                    </div>
+                                </div>
+                                <span class="atributo-valor">@valor/10</span>
+                            </div>
+                        }
+
                     </div>
-                    <div class="resultado-item">
-                        <span class="resultado-label">Textura estimada</span>
-                        <span class="resultado-valor" id="textura-estimada">—</span>
+                </section>
+
+                <!-- COLOR Y TEXTURA -->
+                <section class="seccion-color-textura">
+                    <h2>🎨 Color y Textura</h2>
+                    <div class="color-textura-grid">
+                        <div class="resultado-item">
+                            <span class="resultado-label">Color esperado</span>
+                            <span class="resultado-valor">@perfil.ColorEsperado</span>
+                        </div>
+                        <div class="resultado-item">
+                            <span class="resultado-label">Textura estimada</span>
+                            <span class="resultado-valor">@perfil.TexturaEstimada</span>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- PREDICCIÓN TEXTUAL -->
-            <section class="seccion-prediccion">
-                <h2>🔮 Predicción</h2>
-                <p class="prediccion-texto" id="prediccion-texto">
-                    Completá los ingredientes y presioná <strong>Calcular</strong> para ver la predicción.
-                </p>
-            </section>
+                <!-- PREDICCIÓN TEXTUAL -->
+                <section class="seccion-prediccion">
+                    <h2>🔮 Predicción</h2>
+                    <p class="prediccion-texto">@perfil.PrediccionTextual</p>
+                </section>
 
-            <!-- RECOMENDACIONES -->
-            <section class="seccion-recomendaciones">
-                <h2>💡 Recomendaciones</h2>
-                <ul class="lista-recomendaciones" id="lista-recomendaciones">
-                    <li class="recomendacion-placeholder">Las recomendaciones aparecen después de calcular.</li>
-                </ul>
-            </section>
+                <!-- RECOMENDACIONES -->
+                <section class="seccion-recomendaciones">
+                    <h2>💡 Recomendaciones</h2>
+                    <ul class="lista-recomendaciones">
+                        @foreach (var rec in perfil.Recomendaciones)
+                        {
+                            <li class="@ClaseRecomendacion(rec.Tipo)">@rec.Mensaje</li>
+                        }
+                    </ul>
+                </section>
+            }
 
         </main>
 
     </div>
 
-    <!-- ===== BIBLIOTECA DE BUILDS (debajo del simulador) ===== -->
+    <!-- ===== BIBLIOTECA DE BUILDS ===== -->
     <section class="seccion-builds">
         <h2>📚 Recetas Pre-armadas</h2>
         <p>Hacé click en una receta para cargarla en el simulador.</p>
 
         <div class="builds-grid">
-
-            <article class="build-card">
-                <h3>🌴 Tropical Gourmet</h3>
-                <p>Habanero 40% · Mango 20% · Piña 10% · Zanahoria 15%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 7/10</span>
-                    <span class="build-dias">📅 5 días</span>
-                </div>
-                <p class="build-descripcion">Tropical explosivo, frutal, dulce-picante, floral.</p>
-                <button type="button" class="btn-cargar-build" data-build="tropical-gourmet">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🇲🇽 Mexicana Verde</h3>
-                <p>Jalapeño 40% · Serrano 30% · Tomate verde 15%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 5/10</span>
-                    <span class="build-dias">📅 4 días</span>
-                </div>
-                <p class="build-descripcion">Verde fresco, herbáceo, cítrico, limpio.</p>
-                <button type="button" class="btn-cargar-build" data-build="mexicana-verde">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🔴 Roja Balanceada</h3>
-                <p>Cayena 30% · Jalapeño rojo 30% · Zanahoria 20%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 5/10</span>
-                    <span class="build-dias">📅 6 días</span>
-                </div>
-                <p class="build-descripcion">Rojo clásico, equilibrado, versátil.</p>
-                <button type="button" class="btn-cargar-build" data-build="roja-balanceada">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🥭 Mango Habanero</h3>
-                <p>Habanero 35% · Mango 35% · Cebolla morada 15%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 8/10</span>
-                    <span class="build-dias">📅 3 días</span>
-                </div>
-                <p class="build-descripcion">Frutal-tropical intenso, dulce y feroz.</p>
-                <button type="button" class="btn-cargar-build" data-build="mango-habanero">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🔥 Ahumada BBQ</h3>
-                <p>Chipotle 50% · Ancho 20% · Chile de árbol 15%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 5/10</span>
-                    <span class="build-dias">📅 7 días</span>
-                </div>
-                <p class="build-descripcion">Ahumado profundo, BBQ, dulzor caramelizado.</p>
-                <button type="button" class="btn-cargar-build" data-build="ahumada-bbq">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🎷 Estilo Louisiana</h3>
-                <p>Cayena 50% · Jalapeño 20% · Vinagre blanco 20%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 6/10</span>
-                    <span class="build-dias">📅 7 días</span>
-                </div>
-                <p class="build-descripcion">Ácido, picante, limpio. Estilo Tabasco.</p>
-                <button type="button" class="btn-cargar-build" data-build="louisiana">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🟢 Verde Cítrica</h3>
-                <p>Serrano 40% · Jalapeño 25% · Lima 20%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 5/10</span>
-                    <span class="build-dias">📅 3 días</span>
-                </div>
-                <p class="build-descripcion">Cítrico, fresco, verde, limpio.</p>
-                <button type="button" class="btn-cargar-build" data-build="verde-citrica">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🧄 Garlic Bomb</h3>
-                <p>Cayena 30% · Jalapeño 20% · Ajo 30%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 5/10</span>
-                    <span class="build-dias">📅 8 días</span>
-                </div>
-                <p class="build-descripcion">Ajo dominante, picante medio, aromática intensa.</p>
-                <button type="button" class="btn-cargar-build" data-build="garlic-bomb">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card">
-                <h3>🍄 Umami Profunda</h3>
-                <p>Chipotle 25% · Ancho 20% · Tomate 20% · Ajo 15%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 4/10</span>
-                    <span class="build-dias">📅 10 días</span>
-                </div>
-                <p class="build-descripcion">Umami profundo, terroso, complejo como un mole.</p>
-                <button type="button" class="btn-cargar-build" data-build="umami-profunda">
-                    Cargar receta
-                </button>
-            </article>
-
-            <article class="build-card build-card--peligro">
-                <h3>☢️ Nuclear</h3>
-                <p>Carolina Reaper 30% · Ghost Pepper 30% · Trinidad Scorpion 20%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 10/10</span>
-                    <span class="build-dias">📅 5 días</span>
-                </div>
-                <p class="build-descripcion">Solo picante. SOLO PICANTE.</p>
-                <button type="button" class="btn-cargar-build" data-build="nuclear">
-                    Cargar receta ☢️
-                </button>
-            </article>
-
-            <article class="build-card build-card--peligro">
-                <h3>😭 Criminal de Guerra</h3>
-                <p>Carolina Reaper 40% · Trinidad Scorpion 40% · Chile de árbol 20%</p>
-                <div class="build-meta">
-                    <span class="build-picante">🌶 10/10</span>
-                    <span class="build-dias">📅 3 días</span>
-                </div>
-                <p class="build-descripcion">⚠️ PELIGRO BIOLÓGICO. Esta salsa es un arma.</p>
-                <button type="button" class="btn-cargar-build" data-build="criminal-de-guerra">
-                    Cargar receta 😭
-                </button>
-            </article>
-
+            @foreach (var build in builds)
+            {
+                <article class="build-card @(build.EsPeligrosa ? "build-peligrosa" : "")">
+                    <h3>@build.Emoji @build.Nombre</h3>
+                    <p>@build.Ingredientes</p>
+                    <div class="build-meta">
+                        <span class="build-picante">🌶 @build.Picante/10</span>
+                        <span class="build-dias">📅 @build.DiasFerrmentacion días</span>
+                    </div>
+                    <p class="build-descripcion">@build.NotasSabor</p>
+                    @if (build.EsPeligrosa)
+                    {
+                        <p class="build-advertencia">⚠️ Nivel: PELIGRO BIOLÓGICO</p>
+                    }
+                    <button type="button" class="btn-cargar-build"
+                            @onclick="() => CargarBuild(build)">
+                        Cargar receta
+                    </button>
+                </article>
+            }
         </div>
     </section>
 

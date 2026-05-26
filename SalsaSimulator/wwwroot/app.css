@@ -1,6 +1,25 @@
-h1:focus {
-    outline: none;
+/* ── Reset y base ──────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f7f7f7;
+    color: #2d3748;
+    font-size: 15px;
+}
+
+h1, h2, h3 {
+    line-height: 1.2;
+}
+
+    /* ── Blazor defaults ───────────────────────────────────────── */
+    h1:focus {
+        outline: none;
+    }
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -15,7 +34,7 @@ h1:focus {
 }
 
 .blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbmsiPjwvc3ZnPg==) no-repeat 1rem/1.8rem, #b32121;
     padding: 1rem 1rem 1rem 3.7rem;
     color: white;
 }
@@ -24,15 +43,832 @@ h1:focus {
         content: "An error has occurred."
     }
 
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
+/* ── Layout principal ──────────────────────────────────────── */
+.simulador-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-    color: var(--bs-secondary-color);
-    text-align: end;
+/* ── Header ────────────────────────────────────────────────── */
+.simulador-header {
+    text-align: center;
+    padding: 32px 16px;
+    background: linear-gradient(135deg, #c53030 0%, #e53e3e 50%, #ed8936 100%);
+    border-radius: 16px;
+    color: white;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-    text-align: start;
+    .simulador-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .simulador-header p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+/* ── Body: dos columnas ────────────────────────────────────── */
+.simulador-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .simulador-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Paneles ───────────────────────────────────────────────── */
+.panel-formulario,
+.panel-resultados {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ── Secciones ─────────────────────────────────────────────── */
+.seccion-ajies h2,
+.seccion-ingredientes h2,
+.seccion-fermentacion h2,
+.seccion-perfil h2,
+.seccion-color-textura h2,
+.seccion-prediccion h2,
+.seccion-recomendaciones h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fed7d7;
+    color: #c53030;
+}
+
+.seccion-ajies p {
+    font-size: 0.85rem;
+    color: #718096;
+    margin-bottom: 10px;
+}
+
+/* ── Tabla de ajíes ────────────────────────────────────────── */
+.tabla-ajies {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+    .tabla-ajies th {
+        background: #fff5f5;
+        color: #c53030;
+        padding: 8px 6px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #fed7d7;
+    }
+
+    .tabla-ajies td {
+        padding: 6px 4px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+
+    .tabla-ajies tr:hover td {
+        background: #fffafa;
+    }
+
+    .tabla-ajies select,
+    .tabla-ajies input[type="number"] {
+        width: 100%;
+        padding: 5px 6px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        background: #fafafa;
+        color: #2d3748;
+    }
+
+        .tabla-ajies select:focus,
+        .tabla-ajies input:focus {
+            outline: none;
+            border-color: #e53e3e;
+            background: white;
+        }
+
+.porcentaje {
+    font-weight: 700;
+    color: #e53e3e;
+    font-size: 0.85rem;
+}
+
+.info-rapida {
+    font-size: 0.78rem;
+    color: #718096;
+    white-space: nowrap;
+}
+
+/* ── Ingredientes grid ─────────────────────────────────────── */
+.ingredientes-grid,
+.fermentacion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.ingrediente-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafafa;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+    .ingrediente-item label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #4a5568;
+        white-space: nowrap;
+        min-width: 110px;
+    }
+
+    .ingrediente-item input[type="number"],
+    .ingrediente-item input[type="range"] {
+        flex: 1;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 4px 6px;
+        font-size: 0.85rem;
+        background: white;
+        min-width: 0;
+    }
+
+    .ingrediente-item input:focus {
+        outline: none;
+        border-color: #e53e3e;
+    }
+
+.unidad {
+    font-size: 0.75rem;
+    color: #a0aec0;
+    white-space: nowrap;
+}
+
+/* ── Guía fermentación ─────────────────────────────────────── */
+.guia-fermentacion {
+    margin-top: 12px;
+    background: #fffff0;
+    border: 1px solid #faf089;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+}
+
+    .guia-fermentacion h3 {
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #744210;
+    }
+
+    .guia-fermentacion ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .guia-fermentacion li {
+        color: #744210;
+    }
+
+/* ── Botones ───────────────────────────────────────────────── */
+.acciones-formulario {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-calcular {
+    flex: 1;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #c53030, #e53e3e);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+    .btn-calcular:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .btn-calcular:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+.btn-limpiar {
+    padding: 12px 16px;
+    background: #edf2f7;
+    color: #4a5568;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-limpiar:hover {
+        background: #e2e8f0;
+    }
+
+/* ── Placeholder resultados ────────────────────────────────── */
+.placeholder-resultados {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #a0aec0;
+    font-size: 1rem;
+    padding: 40px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+}
+
+    .placeholder-resultados p {
+        max-width: 300px;
+        line-height: 1.6;
+    }
+
+/* ── Atributos de sabor ────────────────────────────────────── */
+.atributos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.atributo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.atributo-icono {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+}
+
+.atributo-nombre {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a5568;
+    width: 130px;
+    flex-shrink: 0;
+}
+
+.barra-contenedor {
+    flex: 1;
+    background-color: #edf2f7;
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.barra-relleno {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+    min-width: 2px;
+}
+
+.atributo-valor {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2d3748;
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* ── Color y textura ───────────────────────────────────────── */
+.color-textura-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.resultado-item {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.resultado-label {
+    font-size: 0.75rem;
+    color: #a0aec0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.resultado-valor {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+/* ── Predicción ────────────────────────────────────────────── */
+.prediccion-texto {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #4a5568;
+    background: #f7fafc;
+    border-left: 4px solid #e53e3e;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+}
+
+/* ── Recomendaciones ───────────────────────────────────────── */
+.lista-recomendaciones {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .lista-recomendaciones li {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        line-height: 1.4;
+    }
+
+.rec-ok {
+    background-color: #f0fff4;
+    border-left: 4px solid #38a169;
+    color: #276749;
+}
+
+.rec-warning {
+    background-color: #fffaf0;
+    border-left: 4px solid #dd6b20;
+    color: #9c4221;
+}
+
+.rec-sugerencia {
+    background-color: #ebf8ff;
+    border-left: 4px solid #3182ce;
+    color: #2c5282;
+}
+
+/* ── Builds ────────────────────────────────────────────────── */
+.seccion-builds {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+    .seccion-builds h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #c53030;
+        margin-bottom: 4px;
+    }
+
+    .seccion-builds > p {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-bottom: 16px;
+    }
+
+.builds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.build-card {
+    background: #fafafa;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+    .build-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+
+    .build-card h3 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .build-card p {
+        font-size: 0.82rem;
+        color: #718096;
+        line-height: 1.4;
+    }
+
+.build-meta {
+    display: flex;
+    gap: 10px;
+}
+
+.build-picante,
+.build-dias {
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #fff5f5;
+    color: #c53030;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid #fed7d7;
+}
+
+.build-dias {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    border-color: #bee3f8;
+}
+
+.build-descripcion {
+    font-size: 0.82rem;
+    font-style: italic;
+    color: #4a5568 !important;
+}
+
+.btn-cargar-build {
+    margin-top: auto;
+    padding: 8px 14px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-cargar-build:hover {
+        background: #c53030;
+    }
+
+/* ── Builds peligrosos ─────────────────────────────────────── */
+.build-peligrosa {
+    border: 2px solid #e53e3e;
+    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+}
+
+    .build-peligrosa h3 {
+        color: #c53030;
+    }
+
+.build-advertencia {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #c53030;
+    margin: 4px 0 8px;
+    letter-spacing: 0.03em;
+}
+
+/* ── Modo oscuro ───────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+
+    body {
+        background: #0f0f0f;
+        color: #e2e8f0;
+    }
+
+    .simulador-header {
+        background: linear-gradient(135deg, #7b1a1a 0%, #9b2c2c 50%, #c05621 100%);
+    }
+
+    .panel-formulario,
+    .panel-resultados,
+    .seccion-builds {
+        background: #1a1a1a;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+
+        .seccion-ajies h2,
+        .seccion-ingredientes h2,
+        .seccion-fermentacion h2,
+        .seccion-perfil h2,
+        .seccion-color-textura h2,
+        .seccion-prediccion h2,
+        .seccion-recomendaciones h2,
+        .seccion-builds h2 {
+            color: #fc8181;
+            border-bottom-color: #742a2a;
+        }
+
+        .seccion-ajies p,
+        .seccion-builds > p {
+            color: #a0aec0;
+        }
+
+    /* Tabla ajíes */
+    .tabla-ajies th {
+        background: #2d1515;
+        color: #fc8181;
+        border-bottom-color: #742a2a;
+    }
+
+    .tabla-ajies td {
+        border-bottom-color: #2d2d2d;
+    }
+
+    .tabla-ajies tr:hover td {
+        background: #1f1f1f;
+    }
+
+    .tabla-ajies select,
+    .tabla-ajies input[type="number"] {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+        color: #e2e8f0;
+    }
+
+        .tabla-ajies select:focus,
+        .tabla-ajies input:focus {
+            border-color: #fc8181;
+            background: #333;
+        }
+
+    .porcentaje {
+        color: #fc8181;
+    }
+
+    .info-rapida {
+        color: #718096;
+    }
+
+    /* Ingredientes */
+    .ingrediente-item {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+    }
+
+        .ingrediente-item label {
+            color: #cbd5e0;
+        }
+
+        .ingrediente-item input[type="number"],
+        .ingrediente-item input[type="range"] {
+            background: #1a1a1a;
+            border-color: #3d3d3d;
+            color: #e2e8f0;
+        }
+
+        .ingrediente-item input:focus {
+            border-color: #fc8181;
+        }
+
+    .unidad {
+        color: #4a5568;
+    }
+
+    /* Guía fermentación */
+    .guia-fermentacion {
+        background: #1a1a00;
+        border-color: #5a4a00;
+    }
+
+        .guia-fermentacion h3,
+        .guia-fermentacion li {
+            color: #f6e05e;
+        }
+
+    /* Botones */
+    .btn-calcular {
+        background: linear-gradient(135deg, #9b2c2c, #c53030);
+    }
+
+    .btn-limpiar {
+        background: #2d2d2d;
+        color: #cbd5e0;
+    }
+
+        .btn-limpiar:hover {
+            background: #3d3d3d;
+        }
+
+    /* Placeholder */
+    .placeholder-resultados {
+        border-color: #2d2d2d;
+        color: #4a5568;
+    }
+
+    /* Barras */
+    .barra-contenedor {
+        background: #2d2d2d;
+    }
+
+    .atributo-nombre {
+        color: #cbd5e0;
+    }
+
+    .atributo-valor {
+        color: #e2e8f0;
+    }
+
+    /* Color y textura */
+    .resultado-item {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+    }
+
+    .resultado-label {
+        color: #4a5568;
+    }
+
+    .resultado-valor {
+        color: #e2e8f0;
+    }
+
+    /* Predicción */
+    .prediccion-texto {
+        background: #1a1a1a;
+        border-left-color: #fc8181;
+        color: #cbd5e0;
+    }
+
+    /* Recomendaciones */
+    .rec-ok {
+        background-color: #0f2a1a;
+        border-left-color: #38a169;
+        color: #9ae6b4;
+    }
+
+    .rec-warning {
+        background-color: #1a0f00;
+        border-left-color: #dd6b20;
+        color: #fbd38d;
+    }
+
+    .rec-sugerencia {
+        background-color: #0a1628;
+        border-left-color: #3182ce;
+        color: #90cdf4;
+    }
+
+    /* Builds */
+    .build-card {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+    }
+
+        .build-card h3 {
+            color: #e2e8f0;
+        }
+
+        .build-card p {
+            color: #718096;
+        }
+
+    .build-picante {
+        background: #2d1515;
+        color: #fc8181;
+        border-color: #742a2a;
+    }
+
+    .build-dias {
+        background: #0a1628;
+        color: #90cdf4;
+        border-color: #2c5282;
+    }
+
+    .build-descripcion {
+        color: #a0aec0 !important;
+    }
+
+    .btn-cargar-build {
+        background: #9b2c2c;
+    }
+
+        .btn-cargar-build:hover {
+            background: #7b1a1a;
+        }
+
+    .build-peligrosa {
+        border-color: #fc8181;
+        background: linear-gradient(135deg, #1a0505 0%, #1a1a1a 100%);
+    }
+
+        .build-peligrosa h3 {
+            color: #fc8181;
+        }
+
+    .build-advertencia {
+        color: #fc8181;
+    }
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .simulador-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .simulador-container {
+        padding: 12px 8px;
+        gap: 16px;
+    }
+
+    .simulador-header {
+        padding: 20px 12px;
+    }
+
+        .simulador-header h1 {
+            font-size: 1.4rem;
+        }
+
+    .panel-formulario,
+    .panel-resultados,
+    .seccion-builds {
+        padding: 16px 12px;
+        border-radius: 12px;
+    }
+
+    .ingredientes-grid,
+    .fermentacion-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ingrediente-item {
+        flex-wrap: wrap;
+    }
+
+        .ingrediente-item label {
+            min-width: unset;
+            width: 100%;
+        }
+
+    .tabla-ajies {
+        font-size: 0.78rem;
+    }
+
+        .tabla-ajies th, .tabla-ajies td {
+            padding: 5px 3px;
+        }
+
+    .color-textura-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .builds-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-formulario {
+        flex-direction: column;
+    }
+
+    .btn-calcular, .btn-limpiar {
+        width: 100%;
+    }
+
+    .atributo-nombre {
+        width: 100px;
+        font-size: 0.78rem;
+    }
+
+    .build-meta {
+        flex-wrap: wrap;
+    }
 }

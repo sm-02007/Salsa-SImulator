@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SalsaSimulator.Components;
 using SalsaSimulator.Data;
+using SalsaSimulator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<SalsaDbContext>(options =>
     options.UseSqlite("Data Source=salsa.db"));
 
+builder.Services.AddScoped<SalsaCalculatorService>();
 var app = builder.Build();
 
 // ─────────────────────────────────────────────
@@ -61,6 +63,8 @@ app.MapGet("/builds", async (SalsaDbContext db) =>
 {
     return await db.Builds.ToListAsync();
 });
+
+app.UseStaticFiles();
 
 // ─────────────────────────────────────────────
 // Run app
