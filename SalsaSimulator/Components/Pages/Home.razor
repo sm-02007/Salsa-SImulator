@@ -3,8 +3,10 @@
 @using SalsaSimulator.Models
 @using SalsaSimulator.Data
 @using Microsoft.EntityFrameworkCore
+@using System.Text.Json
 @inject SalsaDbContext Db
 @inject SalsaCalculatorService Calculator
+@inject IJSRuntime JS
 
 <PageTitle>Simulador de Salsa Picante</PageTitle>
 
@@ -15,6 +17,10 @@
     private PerfilSalsa? perfil = null;
     private bool calculando = false;
 
+    // ── MEJORA 2: Validación ─────────────────────────────────────
+    private bool PuedeCalcular =>
+        input.Ajies.Any(a => !string.IsNullOrEmpty(a.Nombre) && a.Gramos > 0);
+
     protected override async Task OnInitializedAsync()
     {
         ajies = await Db.Ajies.OrderBy(a => a.Nombre).ToListAsync();
@@ -23,12 +29,35 @@
             input.Ajies.Add(new AjiInput());
     }
 
+    // ── MEJORA 3: Calcular ahora es async Task para poder llamar JS ──
     private async Task Calcular()
     {
+        if (!PuedeCalcular) return;
         calculando = true;
         await Task.Yield();
         perfil = Calculator.Calcular(input, ajies);
         calculando = false;
+
+        // Renderizar gráfico radar luego de que Blazor actualice el DOM
+        await Task.Delay(50);
+        await JS.InvokeVoidAsync("renderRadar",
+            "radarCanvas",
+            new[]
+            {
+                "Picante", "Dulzor", "Acidez", "Tropical",
+                "Umami", "Complejidad", "Frescura",
+                "Ahumado", "Ferocidad", "Balance", "Persistencia"
+            },
+            new double[]
+            {
+                perfil!.Picante,      perfil.Dulzor,
+                perfil.Acidez,        perfil.TropicalFrutal,
+                perfil.Umami,         perfil.Complejidad,
+                perfil.Frescura,      perfil.Ahumado,
+                perfil.Ferocidad,     perfil.Balance,
+                perfil.Persistencia
+            }
+        );
     }
 
     private void Limpiar()
@@ -42,15 +71,61 @@
     private void CargarBuild(Build build)
     {
         Limpiar();
-        var composicion = System.Text.Json.JsonSerializer
-            .Deserialize<List<ComposicionItem>>(build.ComposicionJson) ?? new();
-        for (int i = 0; i < composicion.Count && i < 10; i++)
+
+        var opciones = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        // Cargar ajíes
+        var composicion = JsonSerializer
+            .Deserialize<List<ComposicionItem>>(build.ComposicionJson, opciones) ?? new();
+
+        const double MASA_TOTAL = 200.0;
+        int fila = 0;
+        foreach (var item in composicion)
         {
-            input.Ajies[i].Nombre = composicion[i].nombre;
-            input.Ajies[i].Gramos = composicion[i].porcentaje * 2;
+            if (fila >= 10) break;
+            var ajiEnBD =
+                ajies.FirstOrDefault(a => string.Equals(a.Nombre, item.nombre, StringComparison.OrdinalIgnoreCase)) ??
+                ajies.FirstOrDefault(a => a.Nombre.Contains(item.nombre, StringComparison.OrdinalIgnoreCase)) ??
+                ajies.FirstOrDefault(a => item.nombre.Contains(a.Nombre, StringComparison.OrdinalIgnoreCase));
+            if (ajiEnBD is null) continue;
+            input.Ajies[fila].Nombre = ajiEnBD.Nombre;
+            input.Ajies[fila].Gramos = Math.Round(item.porcentaje / 100.0 * MASA_TOTAL, 1);
+            fila++;
         }
-        input.DiasFerrmentacion = build.DiasFerrmentacion;
+
+        // Cargar ingredientes extra
+        var extras = JsonSerializer
+            .Deserialize<ExtrasInput>(build.ExtrasJson, opciones) ?? new();
+
+        input.Ajo = extras.Ajo;
+        input.CebollaBlanca = extras.CebollaBlanca;
+        input.CebollaMorada = extras.CebollaMorada;
+        input.Zanahoria = extras.Zanahoria;
+        input.Mango = extras.Mango;
+        input.Pina = extras.Pina;
+        input.Manzana = extras.Manzana;
+        input.Tomate = extras.Tomate;
+        input.Morron = extras.Morron;
+        input.Miel = extras.Miel;
+        input.Azucar = extras.Azucar;
+        input.VinagreBlanco = extras.VinagreBlanco;
+        input.VinagreManzana = extras.VinagreManzana;
+        input.Limon = extras.Limon;
+        input.Especias = extras.Especias;
+        input.SalPorcentaje = extras.SalPorcentaje > 0 ? extras.SalPorcentaje : 2.0;
+        input.DiasFerrmentacion = extras.DiasFerrmentacion > 0 ? extras.DiasFerrmentacion : build.DiasFerrmentacion;
+        input.TemperaturaC = extras.TemperaturaC > 0 ? extras.TemperaturaC : 25.0;
+
         perfil = null;
+    }
+
+
+    // ── MEJORA 1: Recalculo en tiempo real ───────────────────────
+    private void RecalcularPorcentajes()
+    {
+        // Se llama automáticamente con @bind:after en cada input de gramos
+        // No hace falta lógica aquí: StateHasChanged se dispara solo.
+        // Si querés cachear los % calculados, hacelo acá.
     }
 
     private string Porcentaje(int index)
@@ -131,8 +206,11 @@
                                     </select>
                                 </td>
                                 <td>
+                                    <!-- MEJORA 1: oninput + @bind:after para reactividad inmediata -->
                                     <input type="number"
                                            @bind="input.Ajies[idx].Gramos"
+                                           @bind:event="oninput"
+                                           @bind:after="RecalcularPorcentajes"
                                            min="0" placeholder="g" />
                                 </td>
                                 <td>
@@ -287,11 +365,30 @@
             </section>
 
             <!-- BOTONES -->
+            <!-- MEJORA 2: botón deshabilitado si no hay ajíes válidos -->
             <div class="acciones-formulario">
-                <button type="button" class="btn-calcular"
-                        @onclick="Calcular" disabled="@calculando">
-                    @(calculando ? "⏳ Calculando..." : "🔥 Calcular Perfil de Salsa")
-                </button>
+                <div class="calcular-wrap">
+                    <button type="button" class="btn-calcular"
+                            @onclick="Calcular"
+                            disabled="@(!PuedeCalcular || calculando)">
+                        @if (calculando)
+                        {
+                            <span>⏳ Calculando...</span>
+                        }
+                        else if (!PuedeCalcular)
+                        {
+                            <span>🔥 Calcular Perfil de Salsa</span>
+                        }
+                        else
+                        {
+                            <span>🔥 Calcular Perfil de Salsa</span>
+                        }
+                    </button>
+                    @if (!PuedeCalcular && !calculando)
+                    {
+                        <p class="validacion-msg">⚠ Agregá al menos un ají con gramos &gt; 0</p>
+                    }
+                </div>
                 <button type="button" class="btn-limpiar" @onclick="Limpiar">
                     🗑 Limpiar todo
                 </button>
@@ -310,6 +407,14 @@
             }
             else
             {
+                <!-- MEJORA 3: Gráfico Radar -->
+                <section class="seccion-radar">
+                    <h2>🕸 Perfil Visual</h2>
+                    <div class="radar-wrap">
+                        <canvas id="radarCanvas"></canvas>
+                    </div>
+                </section>
+
                 <!-- PERFIL DE SABOR -->
                 <section class="seccion-perfil">
                     <h2>📊 Perfil de Sabor</h2>
