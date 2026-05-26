@@ -15,7 +15,8 @@ public class SalsaCalculatorService
             .Where(a => !string.IsNullOrEmpty(a.Nombre) && a.Gramos > 0)
             .Select(a => new
             {
-                Aji = catalogoAjies.FirstOrDefault(c => c.Nombre == a.Nombre),
+                Aji = catalogoAjies.FirstOrDefault(c =>
+                    string.Equals(c.Nombre, a.Nombre, StringComparison.OrdinalIgnoreCase)),
                 Peso = totalGramos > 0 ? a.Gramos / totalGramos : 0
             })
             .Where(x => x.Aji != null)

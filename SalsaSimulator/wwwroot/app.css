@@ -16,10 +16,10 @@ h1, h2, h3 {
     line-height: 1.2;
 }
 
-    /* ── Blazor defaults ───────────────────────────────────────── */
-    h1:focus {
-        outline: none;
-    }
+/* ── Blazor defaults ───────────────────────────────────────── */
+h1:focus {
+    outline: none;
+}
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -81,12 +81,6 @@ h1, h2, h3 {
     align-items: start;
 }
 
-@media (max-width: 900px) {
-    .simulador-body {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* ── Paneles ───────────────────────────────────────────────── */
 .panel-formulario,
 .panel-resultados {
@@ -103,6 +97,7 @@ h1, h2, h3 {
 .seccion-ajies h2,
 .seccion-ingredientes h2,
 .seccion-fermentacion h2,
+.seccion-radar h2,
 .seccion-perfil h2,
 .seccion-color-textura h2,
 .seccion-prediccion h2,
@@ -253,15 +248,30 @@ h1, h2, h3 {
         color: #744210;
     }
 
+/* ── MEJORA 2: Validación del formulario ───────────────────── */
+.calcular-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.validacion-msg {
+    font-size: 0.8rem;
+    color: #c53030;
+    padding: 4px 2px;
+}
+
 /* ── Botones ───────────────────────────────────────────────── */
 .acciones-formulario {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .btn-calcular {
-    flex: 1;
+    width: 100%;
     padding: 12px 20px;
     background: linear-gradient(135deg, #c53030, #e53e3e);
     color: white;
@@ -279,8 +289,9 @@ h1, h2, h3 {
     }
 
     .btn-calcular:disabled {
-        opacity: 0.6;
+        opacity: 0.45;
         cursor: not-allowed;
+        transform: none;
     }
 
 .btn-limpiar {
@@ -293,6 +304,7 @@ h1, h2, h3 {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
+    white-space: nowrap;
 }
 
     .btn-limpiar:hover {
@@ -317,6 +329,19 @@ h1, h2, h3 {
         max-width: 300px;
         line-height: 1.6;
     }
+
+/* ── MEJORA 3: Gráfico Radar ───────────────────────────────── */
+.seccion-radar {
+    /* hereda h2 de .seccion-perfil */
+}
+
+.radar-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: 280px;
+    margin: 0 auto;
+}
 
 /* ── Atributos de sabor ────────────────────────────────────── */
 .atributos-lista {
@@ -583,22 +608,23 @@ h1, h2, h3 {
         box-shadow: 0 2px 12px rgba(0,0,0,0.4);
     }
 
-        .seccion-ajies h2,
-        .seccion-ingredientes h2,
-        .seccion-fermentacion h2,
-        .seccion-perfil h2,
-        .seccion-color-textura h2,
-        .seccion-prediccion h2,
-        .seccion-recomendaciones h2,
-        .seccion-builds h2 {
-            color: #fc8181;
-            border-bottom-color: #742a2a;
-        }
+    .seccion-ajies h2,
+    .seccion-ingredientes h2,
+    .seccion-fermentacion h2,
+    .seccion-radar h2,
+    .seccion-perfil h2,
+    .seccion-color-textura h2,
+    .seccion-prediccion h2,
+    .seccion-recomendaciones h2,
+    .seccion-builds h2 {
+        color: #fc8181;
+        border-bottom-color: #742a2a;
+    }
 
-        .seccion-ajies p,
-        .seccion-builds > p {
-            color: #a0aec0;
-        }
+    .seccion-ajies p,
+    .seccion-builds > p {
+        color: #a0aec0;
+    }
 
     /* Tabla ajíes */
     .tabla-ajies th {
@@ -671,6 +697,11 @@ h1, h2, h3 {
         .guia-fermentacion li {
             color: #f6e05e;
         }
+
+    /* Validación */
+    .validacion-msg {
+        color: #fc8181;
+    }
 
     /* Botones */
     .btn-calcular {
@@ -870,5 +901,9 @@ h1, h2, h3 {
 
     .build-meta {
         flex-wrap: wrap;
+    }
+
+    .radar-wrap {
+        height: 220px;
     }
 }

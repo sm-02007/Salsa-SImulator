@@ -69,3 +69,26 @@ public class Recomendacion
     public string Tipo { get; set; } = string.Empty;  // "ok", "warning", "sugerencia"
     public string Mensaje { get; set; } = string.Empty;
 }
+
+// Agregar al final del archivo
+public class ExtrasInput
+{
+    public double Ajo { get; set; }
+    public double CebollaBlanca { get; set; }
+    public double CebollaMorada { get; set; }
+    public double Zanahoria { get; set; }
+    public double Mango { get; set; }
+    public double Pina { get; set; }
+    public double Manzana { get; set; }
+    public double Tomate { get; set; }
+    public double Morron { get; set; }
+    public double Miel { get; set; }
+    public double Azucar { get; set; }
+    public double VinagreBlanco { get; set; }
+    public double VinagreManzana { get; set; }
+    public double Limon { get; set; }
+    public int Especias { get; set; }
+    public double SalPorcentaje { get; set; }
+    public int DiasFerrmentacion { get; set; }
+    public double TemperaturaC { get; set; }
+}

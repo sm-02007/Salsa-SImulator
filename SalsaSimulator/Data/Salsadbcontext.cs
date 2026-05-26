@@ -58,17 +58,181 @@ public class SalsaDbContext : DbContext
         // SEED: 11 Builds prediseñados
         // ─────────────────────────────────────────────
         modelBuilder.Entity<Build>().HasData(
-            new Build { Id = 1, Slug = "tropical-gourmet", Nombre = "Tropical Gourmet", Emoji = "🌴", Ingredientes = "Habanero 40% + Mango 20% + Piña 10% + Zanahoria 15% + Ajo 5% + Cebolla morada 10%", NotasSabor = "Tropical explosivo, frutal, dulce-picante, floral, naranja intenso", Picante = 7, DiasFerrmentacion = 5, ResultadoEsperado = "Naranja brillante, textura media, dulzor tropical equilibrado con calor habanero.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Habanero","porcentaje":40},{"nombre":"Zanahoria","porcentaje":15},{"nombre":"Cebolla morada","porcentaje":10}]""" },
-            new Build { Id = 2, Slug = "mexicana-verde", Nombre = "Mexicana Verde", Emoji = "🇲🇽", Ingredientes = "Jalapeño 40% + Serrano 30% + Tomate verde 15% + Ajo 10% + Cilantro 5%", NotasSabor = "Verde fresco, herbáceo, cítrico, limpio, vegetal", Picante = 5, DiasFerrmentacion = 4, ResultadoEsperado = "Verde brillante, textura semilíquida, frescura total.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Jalapeño","porcentaje":40},{"nombre":"Serrano","porcentaje":30},{"nombre":"Tomate","porcentaje":15}]""" },
-            new Build { Id = 3, Slug = "roja-balanceada", Nombre = "Roja Balanceada", Emoji = "🔴", Ingredientes = "Cayena 30% + Jalapeño rojo 30% + Zanahoria 20% + Tomate 10% + Ajo 10%", NotasSabor = "Rojo clásico, equilibrado, picante moderado, versátil", Picante = 5, DiasFerrmentacion = 6, ResultadoEsperado = "Rojo brillante, textura media, all-purpose.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":30},{"nombre":"Jalapeño","porcentaje":30},{"nombre":"Zanahoria","porcentaje":20}]""" },
-            new Build { Id = 4, Slug = "mango-habanero", Nombre = "Mango Habanero", Emoji = "🥭", Ingredientes = "Habanero 35% + Mango 35% + Cebolla morada 15% + Lima 10% + Sal 5%", NotasSabor = "Frutal-tropical intenso, dulce y feroz al mismo tiempo", Picante = 8, DiasFerrmentacion = 3, ResultadoEsperado = "Naranja tropical, textura líquida-media, dulzor + calor extremo.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Habanero","porcentaje":35}]""" },
-            new Build { Id = 5, Slug = "ahumada-bbq", Nombre = "Ahumada BBQ", Emoji = "🔥", Ingredientes = "Chipotle 50% + Ancho 20% + Chile de Árbol 15% + Ajo 10% + Miel 5%", NotasSabor = "Ahumado profundo, BBQ, dulzor caramelizado, terroso", Picante = 5, DiasFerrmentacion = 7, ResultadoEsperado = "Café-rojo oscuro, espesa, ahumado dominante.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Chipotle (Jalapeño ahumado)","porcentaje":50},{"nombre":"Ancho (Poblano seco)","porcentaje":20},{"nombre":"Chile de Árbol","porcentaje":15}]""" },
-            new Build { Id = 6, Slug = "louisiana", Nombre = "Estilo Louisiana", Emoji = "🎷", Ingredientes = "Cayena 50% + Jalapeño 20% + Vinagre blanco 20% + Sal 10%", NotasSabor = "Ácido, picante, limpio, directo — estilo Tabasco/Frank's", Picante = 6, DiasFerrmentacion = 7, ResultadoEsperado = "Rojo brillante, muy líquida, ácida y picante.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":50},{"nombre":"Jalapeño","porcentaje":20}]""" },
-            new Build { Id = 7, Slug = "verde-citrica", Nombre = "Verde Cítrica", Emoji = "🟢", Ingredientes = "Serrano 40% + Jalapeño 25% + Lima (jugo) 20% + Cebolla 10% + Ajo 5%", NotasSabor = "Cítrico, fresco, verde, limpio con buena acidez", Picante = 5, DiasFerrmentacion = 3, ResultadoEsperado = "Verde-amarillo, líquida, refrescante.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Serrano","porcentaje":40},{"nombre":"Jalapeño","porcentaje":25}]""" },
-            new Build { Id = 8, Slug = "garlic-bomb", Nombre = "Garlic Bomb", Emoji = "🧄", Ingredientes = "Cayena 30% + Jalapeño 20% + Ajo 30% + Vinagre manzana 15% + Cebolla 5%", NotasSabor = "Ajo dominante, picante medio, acidez suave, aromática intensa", Picante = 5, DiasFerrmentacion = 8, ResultadoEsperado = "Rojo-dorado, media, sabor a ajo fermentado extremadamente aromático.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":30},{"nombre":"Jalapeño","porcentaje":20}]""" },
-            new Build { Id = 9, Slug = "umami-profunda", Nombre = "Umami Profunda", Emoji = "🍄", Ingredientes = "Chipotle 25% + Ancho 20% + Chile de Árbol 15% + Tomate 20% + Ajo 15% + Cebolla 5%", NotasSabor = "Umami profundo, terroso, ahumado, complejo como un mole", Picante = 4, DiasFerrmentacion = 10, ResultadoEsperado = "Café oscuro muy espesa, umami extremo.", EsPeligrosa = false, ComposicionJson = """[{"nombre":"Chipotle (Jalapeño ahumado)","porcentaje":25},{"nombre":"Ancho (Poblano seco)","porcentaje":20},{"nombre":"Chile de Árbol","porcentaje":15}]""" },
-            new Build { Id = 10, Slug = "nuclear", Nombre = "Nuclear", Emoji = "☢️", Ingredientes = "Carolina Reaper 30% + Ghost Pepper 30% + Trinidad Scorpion 20% + Habanero 20%", NotasSabor = "Solo picante. SOLO PICANTE.", Picante = 10, DiasFerrmentacion = 5, ResultadoEsperado = "Rojo intenso, líquida, picante más allá del dolor.", EsPeligrosa = true, ComposicionJson = """[{"nombre":"Carolina Reaper","porcentaje":30},{"nombre":"Ghost Pepper / Bhut Jolokia","porcentaje":30},{"nombre":"Trinidad Moruga Scorpion","porcentaje":20},{"nombre":"Habanero","porcentaje":20}]""" },
-            new Build { Id = 11, Slug = "criminal-de-guerra", Nombre = "Criminal de Guerra", Emoji = "😭", Ingredientes = "Carolina Reaper 40% + Trinidad Scorpion 40% + Chile de árbol 20%", NotasSabor = "Destrucción total de papilas. No hay sabor, solo fuego eterno.", Picante = 10, DiasFerrmentacion = 3, ResultadoEsperado = "⚠️ PELIGRO BIOLÓGICO. Rojo sangre. Esta salsa es un arma.", EsPeligrosa = true, ComposicionJson = """[{"nombre":"Carolina Reaper","porcentaje":40},{"nombre":"Trinidad Moruga Scorpion","porcentaje":40},{"nombre":"Chile de Árbol","porcentaje":20}]""" }
-        );
+     new Build
+     {
+         Id = 1,
+         Slug = "tropical-gourmet",
+         Nombre = "Tropical Gourmet",
+         Emoji = "🌴",
+         Ingredientes = "Habanero 40% + Mango 20% + Piña 10% + Zanahoria 15% + Ajo 5% + Cebolla morada 10%",
+         NotasSabor = "Tropical explosivo, frutal, dulce-picante, floral, naranja intenso",
+         Picante = 7,
+         DiasFerrmentacion = 5,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Naranja brillante, textura media, dulzor tropical equilibrado con calor habanero.",
+         ComposicionJson = """[{"nombre":"Habanero","porcentaje":40},{"nombre":"Zanahoria","porcentaje":15},{"nombre":"Cebolla morada","porcentaje":10}]""",
+         ExtrasJson = """{"Mango":40,"Pina":20,"CebollaMorada":20,"Ajo":3,"SalPorcentaje":2,"DiasFerrmentacion":5,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 2,
+         Slug = "mexicana-verde",
+         Nombre = "Mexicana Verde",
+         Emoji = "🇲🇽",
+         Ingredientes = "Jalapeño 40% + Serrano 30% + Tomate verde 15% + Ajo 10% + Cilantro 5%",
+         NotasSabor = "Verde fresco, herbáceo, cítrico, limpio, vegetal",
+         Picante = 5,
+         DiasFerrmentacion = 4,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Verde brillante, textura semilíquida, frescura total.",
+         ComposicionJson = """[{"nombre":"Jalapeño","porcentaje":40},{"nombre":"Serrano","porcentaje":30},{"nombre":"Tomate","porcentaje":15}]""",
+         ExtrasJson = """{"Tomate":30,"Ajo":4,"Limon":20,"Especias":2,"SalPorcentaje":2,"DiasFerrmentacion":4,"TemperaturaC":22}"""
+     },
+
+     new Build
+     {
+         Id = 3,
+         Slug = "roja-balanceada",
+         Nombre = "Roja Balanceada",
+         Emoji = "🔴",
+         Ingredientes = "Cayena 30% + Jalapeño rojo 30% + Zanahoria 20% + Tomate 10% + Ajo 10%",
+         NotasSabor = "Rojo clásico, equilibrado, picante moderado, versátil",
+         Picante = 5,
+         DiasFerrmentacion = 6,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Rojo brillante, textura media, all-purpose.",
+         ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":30},{"nombre":"Jalapeño","porcentaje":30},{"nombre":"Zanahoria","porcentaje":20}]""",
+         ExtrasJson = """{"Zanahoria":40,"Tomate":20,"Ajo":4,"SalPorcentaje":2.5,"DiasFerrmentacion":6,"TemperaturaC":24}"""
+     },
+
+     new Build
+     {
+         Id = 4,
+         Slug = "mango-habanero",
+         Nombre = "Mango Habanero",
+         Emoji = "🥭",
+         Ingredientes = "Habanero 35% + Mango 35% + Cebolla morada 15% + Lima 10% + Sal 5%",
+         NotasSabor = "Frutal-tropical intenso, dulce y feroz al mismo tiempo",
+         Picante = 8,
+         DiasFerrmentacion = 3,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Naranja tropical, textura líquida-media, dulzor + calor extremo.",
+         ComposicionJson = """[{"nombre":"Habanero","porcentaje":35}]""",
+         ExtrasJson = """{"Mango":70,"CebollaMorada":30,"Limon":20,"SalPorcentaje":2,"DiasFerrmentacion":3,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 5,
+         Slug = "ahumada-bbq",
+         Nombre = "Ahumada BBQ",
+         Emoji = "🔥",
+         Ingredientes = "Chipotle 50% + Ancho 20% + Chile de Árbol 15% + Ajo 10% + Miel 5%",
+         NotasSabor = "Ahumado profundo, BBQ, dulzor caramelizado, terroso",
+         Picante = 5,
+         DiasFerrmentacion = 7,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Café-rojo oscuro, espesa, ahumado dominante.",
+         ComposicionJson = """[{"nombre":"Chipotle (Jalapeño ahumado)","porcentaje":50},{"nombre":"Ancho (Poblano seco)","porcentaje":20},{"nombre":"Chile de Árbol","porcentaje":15}]""",
+         ExtrasJson = """{"Ajo":5,"Miel":20,"SalPorcentaje":2,"DiasFerrmentacion":7,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 6,
+         Slug = "louisiana",
+         Nombre = "Estilo Louisiana",
+         Emoji = "🎷",
+         Ingredientes = "Cayena 50% + Jalapeño 20% + Vinagre blanco 20% + Sal 10%",
+         NotasSabor = "Ácido, picante, limpio, directo — estilo Tabasco/Frank's",
+         Picante = 6,
+         DiasFerrmentacion = 7,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Rojo brillante, muy líquida, ácida y picante.",
+         ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":50},{"nombre":"Jalapeño","porcentaje":20}]""",
+         ExtrasJson = """{"VinagreBlanco":80,"SalPorcentaje":3.5,"DiasFerrmentacion":7,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 7,
+         Slug = "verde-citrica",
+         Nombre = "Verde Cítrica",
+         Emoji = "🟢",
+         Ingredientes = "Serrano 40% + Jalapeño 25% + Lima (jugo) 20% + Cebolla 10% + Ajo 5%",
+         NotasSabor = "Cítrico, fresco, verde, limpio con buena acidez",
+         Picante = 5,
+         DiasFerrmentacion = 3,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Verde-amarillo, líquida, refrescante.",
+         ComposicionJson = """[{"nombre":"Serrano","porcentaje":40},{"nombre":"Jalapeño","porcentaje":25}]""",
+         ExtrasJson = """{"Limon":40,"CebollaBlanca":20,"Ajo":3,"SalPorcentaje":2,"DiasFerrmentacion":3,"TemperaturaC":22}"""
+     },
+
+     new Build
+     {
+         Id = 8,
+         Slug = "garlic-bomb",
+         Nombre = "Garlic Bomb",
+         Emoji = "🧄",
+         Ingredientes = "Cayena 30% + Jalapeño 20% + Ajo 30% + Vinagre manzana 15% + Cebolla 5%",
+         NotasSabor = "Ajo dominante, picante medio, acidez suave, aromática intensa",
+         Picante = 5,
+         DiasFerrmentacion = 8,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Rojo-dorado, media, sabor a ajo fermentado extremadamente aromático.",
+         ComposicionJson = """[{"nombre":"Cayena / Cayenne","porcentaje":30},{"nombre":"Jalapeño","porcentaje":20}]""",
+         ExtrasJson = """{"Ajo":15,"VinagreManzana":30,"CebollaBlanca":10,"SalPorcentaje":2.5,"DiasFerrmentacion":8,"TemperaturaC":24}"""
+     },
+
+     new Build
+     {
+         Id = 9,
+         Slug = "umami-profunda",
+         Nombre = "Umami Profunda",
+         Emoji = "🍄",
+         Ingredientes = "Chipotle 25% + Ancho 20% + Chile de Árbol 15% + Tomate 20% + Ajo 15% + Cebolla 5%",
+         NotasSabor = "Umami profundo, terroso, ahumado, complejo como un mole",
+         Picante = 4,
+         DiasFerrmentacion = 10,
+         EsPeligrosa = false,
+         ResultadoEsperado = "Café oscuro muy espesa, umami extremo.",
+         ComposicionJson = """[{"nombre":"Chipotle (Jalapeño ahumado)","porcentaje":25},{"nombre":"Ancho (Poblano seco)","porcentaje":20},{"nombre":"Chile de Árbol","porcentaje":15}]""",
+         ExtrasJson = """{"Tomate":40,"Ajo":8,"CebollaBlanca":10,"Morron":20,"Especias":3,"SalPorcentaje":2.5,"DiasFerrmentacion":10,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 10,
+         Slug = "nuclear",
+         Nombre = "Nuclear",
+         Emoji = "☢️",
+         Ingredientes = "Carolina Reaper 30% + Ghost Pepper 30% + Trinidad Scorpion 20% + Habanero 20%",
+         NotasSabor = "Solo picante. SOLO PICANTE.",
+         Picante = 10,
+         DiasFerrmentacion = 5,
+         EsPeligrosa = true,
+         ResultadoEsperado = "Rojo intenso, líquida, picante más allá del dolor.",
+         ComposicionJson = """[{"nombre":"Carolina Reaper","porcentaje":30},{"nombre":"Ghost Pepper / Bhut Jolokia","porcentaje":30},{"nombre":"Trinidad Moruga Scorpion","porcentaje":20},{"nombre":"Habanero","porcentaje":20}]""",
+         ExtrasJson = """{"SalPorcentaje":2,"DiasFerrmentacion":5,"TemperaturaC":25}"""
+     },
+
+     new Build
+     {
+         Id = 11,
+         Slug = "criminal-de-guerra",
+         Nombre = "Criminal de Guerra",
+         Emoji = "😭",
+         Ingredientes = "Carolina Reaper 40% + Trinidad Scorpion 40% + Chile de árbol 20%",
+         NotasSabor = "Destrucción total de papilas. No hay sabor, solo fuego eterno.",
+         Picante = 10,
+         DiasFerrmentacion = 3,
+         EsPeligrosa = true,
+         ResultadoEsperado = "⚠️ PELIGRO BIOLÓGICO. Rojo sangre. Esta salsa es un arma.",
+         ComposicionJson = """[{"nombre":"Carolina Reaper","porcentaje":40},{"nombre":"Trinidad Moruga Scorpion","porcentaje":40},{"nombre":"Chile de Árbol","porcentaje":20}]""",
+         ExtrasJson = """{"SalPorcentaje":2,"DiasFerrmentacion":3,"TemperaturaC":28}"""
+     }
+ );
     }
 }
